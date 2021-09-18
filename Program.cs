@@ -11,25 +11,41 @@ namespace GraphApp
             Console.WriteLine("Hello World!");
 
             //Пусть имеется такой граф(список дуг):
-            List<Edge> MyEdges = new List<Edge>();
-            MyEdges.Add(new Edge(1,2));
-            MyEdges.Add(new Edge(3,2));
-            MyEdges.Add(new Edge(4,3));
-            MyEdges.Add(new Edge(4,5));
-            MyEdges.Add(new Edge(6,5));
-            MyEdges.Add(new Edge(7,6));
-            MyEdges.Add(new Edge(7,8));
-            MyEdges.Add(new Edge(8,9));
-            MyEdges.Add(new Edge(9,1));
-            MyEdges.Add(new Edge(2,7));
-            MyEdges.Add(new Edge(3,10));
-            MyEdges.Add(new Edge(4,8));
-            MyEdges.Add(new Edge(6,10));
-            MyEdges.Add(new Edge(10,9));
+            List<Edge> myEdges = new List<Edge>();
+            //myEdges.Add(new Edge(1,2));
+            //myEdges.Add(new Edge(3,2));
+            //myEdges.Add(new Edge(4,3));
+            //myEdges.Add(new Edge(4,5));
+            //myEdges.Add(new Edge(6,5));
+            //myEdges.Add(new Edge(7,6));
+            //myEdges.Add(new Edge(7,8));
+            //myEdges.Add(new Edge(8,9));
+            //myEdges.Add(new Edge(9,1));
+            //myEdges.Add(new Edge(2,7));
+            //myEdges.Add(new Edge(3,10));
+            //myEdges.Add(new Edge(4,8));
+            //myEdges.Add(new Edge(6,10));
+            //myEdges.Add(new Edge(10,9));
 
-            List<Subgraph> res = new List<Subgraph>();
+            //начинать надо с нуля, а на с 1 - тупой алгоритм
+            myEdges.Add(new Edge(0, 1));
+            myEdges.Add(new Edge(2, 1));
+            myEdges.Add(new Edge(3, 2));
+            myEdges.Add(new Edge(3, 4));
+            myEdges.Add(new Edge(5, 4));
+            myEdges.Add(new Edge(6, 5));
+            myEdges.Add(new Edge(6, 7));
+            myEdges.Add(new Edge(7, 8));
+            myEdges.Add(new Edge(8, 0));
+            myEdges.Add(new Edge(1, 6));
+            myEdges.Add(new Edge(2, 9));
+            myEdges.Add(new Edge(3, 7));
+            myEdges.Add(new Edge(5, 9));
+            myEdges.Add(new Edge(9, 8));
 
-            MyAlgorithm.TopologicalDecomposition(10, MyEdges, res);
+            List<Subgraph> subgraphs = new List<Subgraph>();
+
+            MyAlgorithm.TopologicalDecomposition(10, myEdges, subgraphs);
 
             Console.WriteLine("END");
         }
@@ -37,14 +53,14 @@ namespace GraphApp
 
     public class Edge
     {
-        public int v1, v2;
+        public int beginPoint, endPoint;
      
-        /// <param name="v1">номер вершины, из которой дуга исходит</param>
-        /// <param name="v2">номер вершины, в которую данная дуга заходит</param>
-        public Edge(int v1, int v2)
+        /// <param name="_beginPoint">номер вершины, из которой дуга исходит</param>
+        /// <param name="_endPoint">номер вершины, в которую данная дуга заходит</param>
+        public Edge(int _beginPoint, int _endPoint)
         {
-            this.v1 = v1;
-            this.v2 = v2;
+            this.beginPoint = _beginPoint;
+            this.endPoint = _endPoint;
         }
     }
 
@@ -66,26 +82,27 @@ namespace GraphApp
     public class MyAlgorithm {
 
         /// <summary>
-        /// 
+        /// Если вершина endVIndex достижима из вершины beginVIndex, то метод вернет значение true, иначе false.
         /// </summary>
-        /// <param name="u">номер начальной вершины</param>
-        /// <param name="endV">номер конечной вершины</param>
-        /// <param name="E"> список дуг графа</param>
-        /// <param name="color">цвета вершин</param>
-        /// <returns>Если вершина endV достижима из вершины u, то метод вернет значение true, иначе false.</returns>
-        static bool DFS(int u, int endV, List<Edge> E, int[] color)
+        /// <param name="beginVIndex">номер начальной вершины</param>
+        /// <param name="endVIndex">номер конечной вершины</param>
+        /// <param name="Edges"> список дуг графа</param>
+        /// <param name="colors">цвета вершин</param>       
+        static bool DFS(int beginVIndex, int endVIndex, List<Edge> Edges, int[] colors)
         {
-            color[u] = 2;
-            if (u == endV)
+            colors[beginVIndex] = 2;
+            if (beginVIndex == endVIndex)
             {
                 return true;
             }
-            for (int w = 0; w < E.Count; w++)
+            for (int w = 0; w < Edges.Count; w++)
             {
-                if (color[E[w].v2] == 1 && E[w].v1 == u)
+                Edge itemEdge = Edges[w];
+                int colorIndex = itemEdge.endPoint;
+                if (colors[colorIndex] == 1 && itemEdge.beginPoint == beginVIndex)
                 {
-                    if (DFS(E[w].v2, endV, E, color)) return true;
-                    color[E[w].v2] = 1;
+                    if (DFS(itemEdge.endPoint, endVIndex, Edges, colors)) return true;
+                    colors[colorIndex] = 1;
                 }
             }
             return false;
@@ -108,26 +125,26 @@ namespace GraphApp
                 R.Add(notUsedV[0]);
                 List<int> Q = new List<int>(); //контрдостижимое множество
                 Q.Add(notUsedV[0]);
-                int[] color = new int[countV];
+                int[] colors = new int[countV];
                 //формируем достижимое и контрдостижимое множества
                 for (int i = 1; i < notUsedV.Count; i++)
                 {
                     for (int k = 0; k < countV; k++)
                     {
                         if (notUsedV.IndexOf(k) != -1)
-                            color[k] = 1;
+                            colors[k] = 1;
                         else
-                            color[k] = 2;
+                            colors[k] = 2;
                     }
-                    if (DFS(notUsedV[0], notUsedV[i], E, color)) R.Add(notUsedV[i]);
+                    if (DFS(notUsedV[0], notUsedV[i], E, colors)) R.Add(notUsedV[i]);
                     for (int k = 0; k < countV; k++)
                     {
                         if (notUsedV.IndexOf(k) != -1)
-                            color[k] = 1;
+                            colors[k] = 1;
                         else
-                            color[k] = 2;
+                            colors[k] = 2;
                     }
-                    if (DFS(notUsedV[i], notUsedV[0], E, color)) Q.Add(notUsedV[i]);
+                    if (DFS(notUsedV[i], notUsedV[0], E, colors)) Q.Add(notUsedV[i]);
                 }
                 //пересечение множеств R и Q
                 List<int> intersection = new List<int>(R.Intersect(Q).ToList());
