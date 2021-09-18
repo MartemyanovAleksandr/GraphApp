@@ -27,7 +27,7 @@ namespace GraphApp
             //myEdges.Add(new Edge(6,10));
             //myEdges.Add(new Edge(10,9));
 
-            //начинать надо с нуля, а на с 1 - тупой алгоритм
+            //начинать надо с 0, а на с 1 - тупой алгоритм
             myEdges.Add(new Edge(0, 1));
             myEdges.Add(new Edge(2, 1));
             myEdges.Add(new Edge(3, 2));
