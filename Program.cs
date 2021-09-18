@@ -8,7 +8,7 @@ namespace GraphApp
     {
         static void Main(string[] args)
         {
-            Console.WriteLine("Hello World!");
+            Console.WriteLine("BEGIN");
 
             //Пусть имеется такой граф(список дуг):
             List<Edge> myEdges = new List<Edge>();
@@ -47,7 +47,26 @@ namespace GraphApp
 
             MyAlgorithm.TopologicalDecomposition(10, myEdges, subgraphs);
 
+            for (int i = 0; i < subgraphs.Count; i++) {
+                Subgraph subgraph = subgraphs[i];
+              
+                string resString = $"Подграф_{i + 1}: (";
+                for (int j = 0; j < subgraph.Peaks.Count; j++)
+                {
+                    int peak = subgraph.Peaks[j];
+                    resString += $"{peak}";
+                    if (j < (subgraph.Peaks.Count - 1)) {
+                        resString += ", ";
+                    };
+                        
+                };
+                resString += ")";
+
+                Console.WriteLine(resString);
+            };
+           
             Console.WriteLine("END");
+            Console.ReadKey();
         }
     }
 
@@ -66,15 +85,15 @@ namespace GraphApp
 
     public class Subgraph
     {
-        public List<int> V;
+        public List<int> Peaks;
 
         public Subgraph()
         {
-            V = new List<int>();
+            Peaks = new List<int>();
         }
         public Subgraph(List<int> V)
         {
-            this.V = new List<int>(V);
+            this.Peaks = new List<int>(V);
         }
 
     }
