@@ -8,46 +8,32 @@ namespace GraphApp
     {
         static void Main(string[] args)
         {
-            Console.WriteLine("BEGIN");
+            List<Edge> myEdges = new List<Edge>();
+            Console.WriteLine("Введите количество вершин:");
+            string n = Console.ReadLine();
+        
+            Console.WriteLine("Введите количество рёбер:");
+            string m = Console.ReadLine();
+            int i = 0;
+            Console.WriteLine("Вводите смежные вершины, сначала вершину из которой выходит ребро, затем вторую:");
+            while (i <= int.Parse(n) | i <= int.Parse(m)) 
+            {
+                Console.Write("Первая вершина: ");
+                string v1 = Console.ReadLine();
+                Console.Write("Первая вершина: ");
+                string v2 = Console.ReadLine();
+                myEdges.Add(new Edge(int.Parse(v1), int.Parse(v2)));
+                i++; // Увеличиваем счетчик.
+                Console.Write("Введите следующую пару вершин: \n");
+            }
 
             //Пусть имеется такой граф(список дуг):
-            List<Edge> myEdges = new List<Edge>();
-            //myEdges.Add(new Edge(1,2));
-            //myEdges.Add(new Edge(3,2));
-            //myEdges.Add(new Edge(4,3));
-            //myEdges.Add(new Edge(4,5));
-            //myEdges.Add(new Edge(6,5));
-            //myEdges.Add(new Edge(7,6));
-            //myEdges.Add(new Edge(7,8));
-            //myEdges.Add(new Edge(8,9));
-            //myEdges.Add(new Edge(9,1));
-            //myEdges.Add(new Edge(2,7));
-            //myEdges.Add(new Edge(3,10));
-            //myEdges.Add(new Edge(4,8));
-            //myEdges.Add(new Edge(6,10));
-            //myEdges.Add(new Edge(10,9));
-
-            //начинать надо с 0, а на с 1 - тупой алгоритм
-            myEdges.Add(new Edge(0, 1));
-            myEdges.Add(new Edge(2, 1));
-            myEdges.Add(new Edge(3, 2));
-            myEdges.Add(new Edge(3, 4));
-            myEdges.Add(new Edge(5, 4));
-            myEdges.Add(new Edge(6, 5));
-            myEdges.Add(new Edge(6, 7));
-            myEdges.Add(new Edge(7, 8));
-            myEdges.Add(new Edge(8, 0));
-            myEdges.Add(new Edge(1, 6));
-            myEdges.Add(new Edge(2, 9));
-            myEdges.Add(new Edge(3, 7));
-            myEdges.Add(new Edge(5, 9));
-            myEdges.Add(new Edge(9, 8));
 
             List<Subgraph> subgraphs = new List<Subgraph>();
 
             MyAlgorithm.TopologicalDecomposition(10, myEdges, subgraphs);
-
-            for (int i = 0; i < subgraphs.Count; i++) {
+            
+            for (i = 0; i < subgraphs.Count; i++) {
                 Subgraph subgraph = subgraphs[i];
               
                 string resString = $"Подграф_{i + 1}: (";
