@@ -12,33 +12,43 @@ namespace GraphApp
             List<Edge> myEdges = new List<Edge>();
             List<Subgraph> mySubgraphs = new List<Subgraph>();
 
-            //Console.WriteLine("Введите количество дуг:");
-            //int countEdges = int.Parse(Console.ReadLine());
-
-            //Console.WriteLine("Чтобы задать дугу введите начальную и конечную вершины через запятую, например 5,7. " +
-            //    "\n !!!Вершины начинам с 0!!!. Иначе всё пропало.");
-            //for (int i = 0; i < countEdges; i++) {
-
-            //    Console.WriteLine($"Задайте дугу номер {i+1}.");
-            //    string[] v = Console.ReadLine().Trim().Split(",");
-            //    myEdges.Add(new Edge(int.Parse(v[0]), int.Parse(v[1])));
-            //};
-
             //Пусть имеется такой граф(список дуг):           
-            myEdges.Add(new Edge(1, 2));
-            myEdges.Add(new Edge(3, 2));
-            myEdges.Add(new Edge(4, 3));
-            myEdges.Add(new Edge(4, 5));
-            myEdges.Add(new Edge(6, 5));
-            myEdges.Add(new Edge(7, 6));
-            myEdges.Add(new Edge(7, 8));
-            myEdges.Add(new Edge(8, 9));
-            myEdges.Add(new Edge(9, 1));
-            myEdges.Add(new Edge(2, 7));
-            myEdges.Add(new Edge(3, 10));
-            myEdges.Add(new Edge(4, 8));
-            myEdges.Add(new Edge(6, 10));
-            myEdges.Add(new Edge(10, 9));
+            //myEdges.Add(new Edge(1, 2));
+            //myEdges.Add(new Edge(3, 2));
+            //myEdges.Add(new Edge(4, 3));
+            //myEdges.Add(new Edge(4, 5));
+            //myEdges.Add(new Edge(6, 5));
+            //myEdges.Add(new Edge(7, 6));
+            //myEdges.Add(new Edge(7, 8));
+            //myEdges.Add(new Edge(8, 9));
+            //myEdges.Add(new Edge(9, 1));
+            //myEdges.Add(new Edge(2, 7));
+            //myEdges.Add(new Edge(3, 10));
+            //myEdges.Add(new Edge(4, 8));
+            //myEdges.Add(new Edge(6, 10));
+            //myEdges.Add(new Edge(10, 9));
+
+            Console.WriteLine("Введите количество дуг:");
+            int countEdges = int.Parse(Console.ReadLine());
+
+            Console.WriteLine("Чтобы задать дугу введите начальную и конечную вершины через запятую, например 5,7.");
+            for (int i = 0; i < countEdges; i++)
+            {
+                Console.WriteLine($"Задайте дугу номер {i + 1}.");
+                string[] v = Console.ReadLine().Trim().Split(",");
+
+                int beginPeak = int.Parse(v[0]) - 1;
+                int endPeak = int.Parse(v[1]) - 1;
+
+                if (beginPeak < 0 || endPeak < 0)
+                {
+                    Console.WriteLine($"Вершины не могут быть меньше 1.");
+                    i--;
+                    continue;
+                }
+                else
+                    myEdges.Add(new Edge(beginPeak, endPeak));
+            };
 
             List<int> peaks = new List<int>();
             myEdges.ForEach(edge =>
@@ -59,7 +69,7 @@ namespace GraphApp
                 for (int j = 0; j < subgraph.Peaks.Count; j++)
                 {
                     int peak = subgraph.Peaks[j];
-                    resString += $"{peak}";
+                    resString += $"{peak + 1}";
                     if (j < (subgraph.Peaks.Count - 1))
                     {
                         resString += ", ";
