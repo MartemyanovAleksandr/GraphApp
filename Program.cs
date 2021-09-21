@@ -12,46 +12,40 @@ namespace GraphApp
             List<Edge> myEdges = new List<Edge>();
             List<Subgraph> mySubgraphs = new List<Subgraph>();
 
-            //Console.WriteLine("Введите количество вершин:");
-            //int countV = int.Parse(Console.ReadLine());
+            //Console.WriteLine("Введите количество дуг:");
+            //int countEdges = int.Parse(Console.ReadLine());
 
-            Console.WriteLine("Введите количество дуг:");
-            int countEdges = int.Parse(Console.ReadLine());
+            //Console.WriteLine("Чтобы задать дугу введите начальную и конечную вершины через запятую, например 5,7. " +
+            //    "\n !!!Вершины начинам с 0!!!. Иначе всё пропало.");
+            //for (int i = 0; i < countEdges; i++) {
 
-            Console.WriteLine("Чтобы задать дугу введите начальную и конечную вершины через запятую, например 5,7. " +
-                "\n !!!Вершины начинам с 0!!!. Иначе всё пропало.");
-            for (int i = 0; i < countEdges; i++) {
-                
-                Console.WriteLine($"Задайте дугу номер {i+1}.");
-                string[] v = Console.ReadLine().Trim().Split(",");
-                myEdges.Add(new Edge(int.Parse(v[0]), int.Parse(v[1])));
-            };
+            //    Console.WriteLine($"Задайте дугу номер {i+1}.");
+            //    string[] v = Console.ReadLine().Trim().Split(",");
+            //    myEdges.Add(new Edge(int.Parse(v[0]), int.Parse(v[1])));
+            //};
 
-            //Console.WriteLine("Введите количество вершин:");
-            //string n = Console.ReadLine();
+            //Пусть имеется такой граф(список дуг):           
+            myEdges.Add(new Edge(1, 2));
+            myEdges.Add(new Edge(3, 2));
+            myEdges.Add(new Edge(4, 3));
+            myEdges.Add(new Edge(4, 5));
+            myEdges.Add(new Edge(6, 5));
+            myEdges.Add(new Edge(7, 6));
+            myEdges.Add(new Edge(7, 8));
+            myEdges.Add(new Edge(8, 9));
+            myEdges.Add(new Edge(9, 1));
+            myEdges.Add(new Edge(2, 7));
+            myEdges.Add(new Edge(3, 10));
+            myEdges.Add(new Edge(4, 8));
+            myEdges.Add(new Edge(6, 10));
+            myEdges.Add(new Edge(10, 9));
 
-            //Console.WriteLine("Введите количество рёбер:");
-            //string m = Console.ReadLine();
-            //int i = 0;
-            //Console.WriteLine("Вводите смежные вершины, сначала вершину из которой выходит ребро, затем вторую:");
-            //while (i <= int.Parse(n) | i <= int.Parse(m))
-            //{
-            //    Console.Write("Первая вершина: ");
-            //    string v1 = Console.ReadLine();
-            //    Console.Write("Первая вершина: ");
-            //    string v2 = Console.ReadLine();
-            //    myEdges.Add(new Edge(int.Parse(v1), int.Parse(v2)));
-            //    i++; // Увеличиваем счетчик.
-            //    Console.Write("Введите следующую пару вершин: \n");
-            //}
-
-            //Пусть имеется такой граф(список дуг):
             List<int> peaks = new List<int>();
-            myEdges.ForEach(edge => {
+            myEdges.ForEach(edge =>
+            {
                 peaks.Add(edge.beginPoint);
                 peaks.Add(edge.endPoint);
             });
-
             int countV = peaks.Distinct().Count();
 
             MyAlgorithm.TopologicalDecomposition(countV, myEdges, mySubgraphs);
@@ -110,10 +104,6 @@ namespace GraphApp
     }
 
     public class MyAlgorithm {
-
-        public void setOptions() {
-           
-        }
 
         /// <summary>
         /// Если вершина endVIndex достижима из вершины beginVIndex, то метод вернет значение true, иначе false.
@@ -190,6 +180,5 @@ namespace GraphApp
             }
         }
               
-    }
-        
+    }        
 }
