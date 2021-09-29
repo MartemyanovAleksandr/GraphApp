@@ -28,27 +28,45 @@ namespace GraphApp
             //myEdges.Add(new Edge(6, 10));
             //myEdges.Add(new Edge(10, 9));
 
-            Console.WriteLine("Введите количество дуг:");
-            int countEdges = int.Parse(Console.ReadLine());
+            //начинать надо с 0, а на с 1 - тупой алгоритм
+            myEdges.Add(new Edge(0, 1));
+            myEdges.Add(new Edge(2, 1));
+            myEdges.Add(new Edge(3, 2));
+            myEdges.Add(new Edge(3, 4));
+            myEdges.Add(new Edge(5, 4));
+            myEdges.Add(new Edge(6, 5));
+            myEdges.Add(new Edge(6, 7));
+            myEdges.Add(new Edge(7, 8));
+            myEdges.Add(new Edge(8, 0));
+            myEdges.Add(new Edge(1, 6));
+            myEdges.Add(new Edge(2, 9));
+            myEdges.Add(new Edge(3, 7));
+            myEdges.Add(new Edge(5, 9));
+            myEdges.Add(new Edge(9, 8));
 
-            Console.WriteLine("Чтобы задать дугу введите начальную и конечную вершины через запятую, например 5,7.");
-            for (int i = 0; i < countEdges; i++)
-            {
-                Console.WriteLine($"Задайте дугу номер {i + 1}.");
-                string[] v = Console.ReadLine().Trim().Split(",");
+            #region enterEdges
+            //Console.WriteLine("Введите количество дуг:");
+            //int countEdges = int.Parse(Console.ReadLine());
 
-                int beginPeak = int.Parse(v[0]) - 1;
-                int endPeak = int.Parse(v[1]) - 1;
+            //Console.WriteLine("Чтобы задать дугу введите начальную и конечную вершины через запятую, например 5,7.");
+            //for (int i = 0; i < countEdges; i++)
+            //{
+            //    Console.WriteLine($"Задайте дугу номер {i + 1}.");
+            //    string[] v = Console.ReadLine().Trim().Split(",");
 
-                if (beginPeak < 0 || endPeak < 0)
-                {
-                    Console.WriteLine($"Вершины не могут быть меньше 1.");
-                    i--;
-                    continue;
-                }
-                else
-                    myEdges.Add(new Edge(beginPeak, endPeak));
-            };
+            //    int beginPeak = int.Parse(v[0]) - 1;
+            //    int endPeak = int.Parse(v[1]) - 1;
+
+            //    if (beginPeak < 0 || endPeak < 0)
+            //    {
+            //        Console.WriteLine($"Вершины не могут быть меньше 1.");
+            //        i--;
+            //        continue;
+            //    }
+            //    else
+            //        myEdges.Add(new Edge(beginPeak, endPeak));
+            //};
+            #endregion enterEdges
 
             List<int> peaks = new List<int>();
             myEdges.ForEach(edge =>
@@ -59,29 +77,9 @@ namespace GraphApp
             int countV = peaks.Distinct().Count();
 
             MyAlgorithm.TopologicalDecomposition(countV, myEdges, mySubgraphs);
+            MyAlgorithm.PrintAltRes(myEdges, mySubgraphs);
+            //MyAlgorithm.PrintRes(mySubgraphs);
 
-            Console.WriteLine("BEGIN");
-            for (int i = 0; i < mySubgraphs.Count; i++)
-            {
-                Subgraph subgraph = mySubgraphs[i];
-
-                string resString = $"Подграф_{i + 1}: (";
-                for (int j = 0; j < subgraph.Peaks.Count; j++)
-                {
-                    int peak = subgraph.Peaks[j];
-                    resString += $"{peak + 1}";
-                    if (j < (subgraph.Peaks.Count - 1))
-                    {
-                        resString += ", ";
-                    };
-
-                };
-                resString += ")";
-
-                Console.WriteLine(resString);
-            };
-            Console.WriteLine("END");
-            Console.ReadKey();
         }
     }
 
@@ -101,7 +99,8 @@ namespace GraphApp
     public class Subgraph
     {
         public List<int> Peaks;
-
+        public string Name;
+       
         public Subgraph()
         {
             Peaks = new List<int>();
@@ -143,7 +142,7 @@ namespace GraphApp
         }
 
         /// <summary>
-        /// выполняет топологическую декомпозицию структуры
+        /// выполняет топологическую декомпозицию структуры, вершины должны начинаться с 0
         /// </summary>
         /// <param name="countV">количество вершин в графе</param>
         /// <param name="E">список дуг в графе</param>
@@ -189,6 +188,73 @@ namespace GraphApp
                 }
             }
         }
-              
+        
+        static public void PrintRes(List<Subgraph> subgraphs) {
+            Console.WriteLine("BEGIN");
+            for (int i = 0; i < subgraphs.Count; i++)
+            {
+                Subgraph subgraph = subgraphs[i];
+
+                string resString = $"Подграф_{i + 1}: (";
+                for (int j = 0; j < subgraph.Peaks.Count; j++)
+                {
+                    int peak = subgraph.Peaks[j];
+                    resString += $"{peak + 1}";
+                    if (j < (subgraph.Peaks.Count - 1))
+                    {
+                        resString += ", ";
+                    };
+
+                };
+                resString += ")";
+
+                Console.WriteLine(resString);
+            };
+            Console.WriteLine("END");
+            Console.ReadKey();
+        }
+
+        static public void PrintAltRes(List<Edge> edges, List<Subgraph> subgraphs) 
+        {
+            IEnumerable<int> peaks = subgraphs.SelectMany(x => x.Peaks);
+            IEnumerable<int> inputPeaks = edges.Select(x => x.endPoint).Where(x => peaks.Contains(x)).Distinct();
+            IEnumerable<int> outputPeaks = edges.Select(x => x.beginPoint).Where(x => peaks.Contains(x)).Distinct();
+
+            //именуем подграфы
+            for (int i = 0; i < subgraphs.Count(); i++) {
+                subgraphs[i].Name = $"G_{i+1}";
+            };
+
+            subgraphs.ForEach(subgraph => {
+                //вершины, через котрые текущий граф "входит" в другие графы
+                List<int> siblingInputPeaks = new List<int>();
+               
+                //по всем исходящм вершинам текущего графа
+                outputPeaks.Where(peak => subgraph.Peaks.Contains(peak)).ToList().ForEach(subgraphOutputPeak => {
+                    //по всем входящим вершинам исключая вершины текущего графа
+                    inputPeaks.Where(inputPeak => !subgraph.Peaks.Contains(inputPeak)).ToList().ForEach(siblingInputPeak => {
+                        //если есть дуга, которая соединяет текущую вершину с другой вершиной, не принадлежащей текущему графу 
+                        Edge linkEdge = edges.FirstOrDefault(e => e.beginPoint == subgraphOutputPeak && e.endPoint == siblingInputPeak);
+                        if (linkEdge != null && !siblingInputPeaks.Contains(siblingInputPeak)) {
+                            siblingInputPeaks.Add(siblingInputPeak);
+                        };
+                    });
+                });
+
+                //смотрим каким графам принадлежит список "соседских входных вершин"
+                IEnumerable<Subgraph> siblingSubgraphs = subgraphs
+                    .Where(sg => (sg.Name != subgraph.Name) && (siblingInputPeaks.Distinct().Intersect(sg.Peaks).Count() > 0));
+
+                string res = $"G({subgraph.Name} => ";
+                if (siblingSubgraphs != null && siblingSubgraphs.Count() > 0)
+                    res += $"{string.Join(",", siblingSubgraphs.Select(s => s.Name))}";
+                else
+                    res += "0";
+
+                res += ")";
+                Console.WriteLine(res);
+            });
+            Console.ReadKey();
+        }
     }        
 }
